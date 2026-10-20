@@ -329,9 +329,11 @@ const TOTAL_MATERIAS=PLAN.reduce((s,a)=>s+a.m.length,0);
 
 function fichaCarrera(top){
   window.scrollTo(0,0);
-  const tuyas=PLAN.flatMap(a=>a.m).filter(m=>m[3].t.includes(top)).length;
+  /* top vacío: se abrió con #carrera (QR de la info de la carrera), sin haber jugado */
+  const esTuya=m=>!!top&&m[3].t.includes(top);
+  const tuyas=PLAN.flatMap(a=>a.m).filter(esTuya).length;
   app.innerHTML=`
-    <div class="hud"><span>ARCHIVO <b>DESBLOQUEADO</b></span><button id="mute" aria-pressed="${mute}">${mute?"SONIDO: NO":"SONIDO: SÍ"}</button></div>
+    <div class="hud"><span>ARCHIVO <b>${top?"DESBLOQUEADO":"PÚBLICO"}</b></span><button id="mute" aria-pressed="${mute}">${mute?"SONIDO: NO":"SONIDO: SÍ"}</button></div>
     <div class="frame">
       <span class="px small" style="color:var(--green)">★ INFO DE LA MISIÓN ★</span>
       <h2>Tecnicatura Superior en Desarrollo de Software</h2>
@@ -355,13 +357,13 @@ function fichaCarrera(top){
 
     <div class="frame">
       <h3>EL MAPA DE NIVELES</h3>
-      <p class="small"><span style="color:var(--yellow)">★</span> lo que te mostramos hoy en el stand · <span style="color:var(--pink)">◆</span> va con tu clase: <strong>${esc(TIPOS[top].clase)}</strong> (${tuyas} materia${tuyas===1?"":"s"})</p>
+      <p class="small"><span style="color:var(--yellow)">★</span> lo que te mostramos hoy en el stand${top?` · <span style="color:var(--pink)">◆</span> va con tu clase: <strong>${esc(TIPOS[top].clase)}</strong> (${tuyas} materia${tuyas===1?"":"s"})`:""}</p>
       ${PLAN.map((a,k)=>`
         <div class="nivel">
           <div class="nivel-h"><span class="px">NIVEL ${k+1} · ${a.nivel}</span><span class="px">${a.hs} HS</span></div>
           <ul class="materias">${a.m.map(m=>`
-            <li class="${m[3].st?"st":""} ${m[3].t.includes(top)?"tuya":""}">
-              <span class="mn">${m[3].st?'<span class="mk" style="color:var(--yellow)">★</span>':""}${m[3].t.includes(top)?'<span class="mk" style="color:var(--pink)">◆</span>':""}${esc(m[0])}</span>
+            <li class="${m[3].st?"st":""} ${esTuya(m)?"tuya":""}">
+              <span class="mn">${m[3].st?'<span class="mk" style="color:var(--yellow)">★</span>':""}${esTuya(m)?'<span class="mk" style="color:var(--pink)">◆</span>':""}${esc(m[0])}</span>
               <span class="mh">${m[1]} HS</span>
               <span class="md">${esc(m[2])}</span>
             </li>`).join("")}</ul>
@@ -389,8 +391,9 @@ function fichaCarrera(top){
       <p class="small">Fuente: Diseño curricular de la Tecnicatura Superior en Desarrollo de Software, Res. 5847/19 de la Dirección General de Cultura y Educación.</p>
     </div>
 
-    <div class="actions"><button class="btn alt" id="volver">◀ Volver a mi resultado</button><span class="idle" id="idle"></span></div>`;
+    <div class="actions">${top?`<button class="btn alt" id="volver">◀ Volver a mi resultado</button>`:`<button class="btn go" id="jugarTest">▶ Hacé el test vocacional</button>`}<span class="idle" id="idle"></span></div>`;
   bindMute();
+  if(!top){ document.getElementById("jugarTest").onclick=()=>{beep(660); try{history.replaceState(null,"",location.pathname+location.search+"#jugar")}catch(e){} inicio()}; return; }
   document.getElementById("volver").onclick=()=>{beep(660); pantallaResultado({...ULTIMO_D,silencio:true}); const t=app.querySelector(".ticket"); if(t) t.scrollIntoView({block:"center"});};
   if(!PERSONAL) armarIdle();
 }
@@ -415,16 +418,17 @@ function bindMute(){const m=document.getElementById("mute"); if(m) m.onclick=()=
 
 /* ---------- modos ----------
    Stand (sin #): la PC del stand muestra el QR y también se puede jugar ahí.
-   #jugar: se abrió desde el QR en un celular. #r=…: resultado llevado al celular desde la PC. */
+   #jugar: se abrió desde el QR en un celular. #r=…: resultado llevado al celular desde la PC.
+   #carrera: la info de la carrera para cualquiera (QR impreso), sin jugar el test. */
 const URL_TEST="https://camilafrontera.github.io/software-es-lo-tuyo/";
 /* VERSION va en los links de los QR: si un celular tiene guardada una versión vieja, la fuerza a cargar la nueva.
    Cambiarlo cada vez que se sube un index.html nuevo. */
-const VERSION="14";
+const VERSION="16";
 function baseURL(){
   try{ if(/^https?:$/.test(location.protocol) && !/claude/i.test(location.hostname)) return location.origin+location.pathname+"?v="+VERSION; }catch(e){}
   return URL_TEST+"?v="+VERSION;
 }
-const PERSONAL=/^#(jugar|r=)/.test(location.hash);
+const PERSONAL=/^#(jugar|r=|carrera)/.test(location.hash);
 function qr(el,texto,tam){
   if(!el) return;
   try{ new QRCode(el,{text:texto,width:tam,height:tam,colorDark:"#0B0618",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M}); el.title=""; }
@@ -704,6 +708,7 @@ document.addEventListener("pointerdown",()=>{if(idleReset) idleReset()});
       return;
     }
   }
+  if(location.hash==="#carrera"){ fichaCarrera(""); return; }
   inicio();
 })();
 </script>
