@@ -83,6 +83,7 @@ p{margin:0;max-width:62ch}
 .career .why{grid-column:1/-1;font-size:15px;color:var(--muted)}
 .career.ours{box-shadow:inset 0 0 0 3px var(--yellow)}
 .career.ours .pct{color:var(--yellow)}
+.career .abre{font-family:var(--pixel);font-size:10px;color:var(--green);white-space:nowrap;margin-left:6px}
 .ext{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .ext span{font-weight:700;font-size:18px;padding:10px 14px;background:var(--dark);box-shadow:inset 0 0 0 2px var(--line)}
 
@@ -173,6 +174,7 @@ h3{font-family:var(--body);font-weight:700;font-size:clamp(17px,2.4vw,21px);lett
 </style>
 </head>
 <body>
+
 <main class="wrap" id="app" aria-live="polite"></main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -208,16 +210,15 @@ const ROL_SOFT={
   E:"Liderar proyectos: planificar etapas, tiempos y costos, y coordinar al equipo. Muchos terminan armando su propia empresa.",
   C:"Testing (QA), bases de datos y documentación: que todo esté ordenado y los errores se encuentren antes de que lleguen a la gente."
 };
+/* Carreras con stand en la Noche del Instituto. abre:true = confirmada para el año que viene
+   (dato de preceptoría; por ahora solo estas tres). Si se confirma otra, cambiar su abre a true. */
 const CARRERAS=[
-  {id:"soft",n:"Desarrollo de Software",code:"IC",why:"Diseñar, programar y probar sistemas trabajando en equipo por proyectos. 3 años."},
-  {id:"ini",n:"Educación Inicial",code:"SA",why:"Profesorado para enseñar y acompañar a los más chicos en el jardín. 4 años."},
-  {id:"pri",n:"Educación Primaria",code:"S",why:"Profesorado para enseñar a leer, escribir y pensar a un grado entero. 4 años."},
-  {id:"esp",n:"Educación Especial",code:"SAI",why:"Profesorado para buscar la forma de enseñarle a cada estudiante. 4 años."},
-  {id:"biot",n:"Biotecnología",code:"CRI",why:"Trabajar en laboratorio con seres vivos para producir alimentos, medicamentos y más."},
-  {id:"agro",n:"Producción Agrícola Ganadera",code:"ERC",why:"Gestionar un campo: cultivos, animales, máquinas y ventas, cuidando el suelo. 3 años."},
-  {id:"log",n:"Logística",code:"CEI",why:"Organizar el recorrido de productos y servicios, del proveedor al cliente. 3 años."},
-  {id:"enf",n:"Enfermería",code:"SCI",why:"Cuidar la salud de personas, familias y comunidades, en hospitales y en el barrio. 3 años."},
-  {id:"seg",n:"Seguridad e Higiene",code:"ICR",why:"Inspeccionar lugares de trabajo, detectar riesgos y armar planes de evacuación. 3 años."}
+  {id:"soft",n:"Desarrollo de Software",code:"IC",abre:true,why:"Diseñar, programar y probar sistemas trabajando en equipo por proyectos. 3 años."},
+  {id:"ini",n:"Educación Inicial",code:"SA",abre:false,why:"Profesorado para enseñar y acompañar a los más chicos en el jardín. 4 años."},
+  {id:"pri",n:"Educación Primaria",code:"S",abre:true,why:"Profesorado para enseñar a leer, escribir y pensar a un grado entero. 4 años."},
+  {id:"esp",n:"Educación Especial",code:"SAI",abre:false,why:"Profesorado para buscar la forma de enseñarle a cada estudiante. 4 años."},
+  {id:"enf",n:"Enfermería",code:"SCI",abre:true,why:"Cuidar la salud de personas, familias y comunidades, en hospitales y en el barrio. 3 años."},
+  {id:"seg",n:"Seguridad e Higiene",code:"ICR",abre:false,why:"Inspeccionar lugares de trabajo, detectar riesgos y armar planes de evacuación. 3 años."}
 ];
 
 const SITUACIONES=[
@@ -385,9 +386,8 @@ function fichaCarrera(top){
       <h3>PARA ENTRAR</h3>
       <div class="skills">
         <span>Tener el secundario completo. Si tenés más de 25 años y no lo terminaste, hay otra forma de inscribirte.</span>
-        <span><strong>¿Venís de una escuela técnica?</strong> Con el título de Técnico en Programación o en Informática Profesional y Personal, tenés el 1.er año aprobado y empezás directo en 2.º.</span>
       </div>
-      <p class="small">Las carreras que abren el año que viene todavía no están confirmadas: consultá en el instituto antes de inscribirte.</p>
+      <p class="small"><strong>Desarrollo de Software abre el año que viene.</strong> Estate atento/a a las fechas de inscripción del instituto.</p>
       <p class="small">Fuente: Diseño curricular de la Tecnicatura Superior en Desarrollo de Software, Res. 5847/19 de la Dirección General de Cultura y Educación.</p>
     </div>
 
@@ -423,7 +423,7 @@ function bindMute(){const m=document.getElementById("mute"); if(m) m.onclick=()=
 const URL_TEST="https://camilafrontera.github.io/software-es-lo-tuyo/";
 /* VERSION va en los links de los QR: si un celular tiene guardada una versión vieja, la fuerza a cargar la nueva.
    Cambiarlo cada vez que se sube un index.html nuevo. */
-const VERSION="16";
+const VERSION="17";
 function baseURL(){
   try{ if(/^https?:$/.test(location.protocol) && !/claude/i.test(location.hostname)) return location.origin+location.pathname+"?v="+VERSION; }catch(e){}
   return URL_TEST+"?v="+VERSION;
@@ -578,9 +578,9 @@ function pantallaResultado(d){
 
     <div class="frame">
       <h3>OTRAS MISIONES EN EL INSTITUTO</h3>
-      <p class="small">Tu compatibilidad con cada carrera que se cursa este año en el instituto, según el mismo modelo de intereses. Qué carreras abren el año que viene todavía no está confirmado: consultalo en el instituto.</p>
+      <p class="small">Tu compatibilidad con cada carrera que tiene stand esta noche, según el mismo modelo de intereses. <span style="color:var(--green)">✔ ABRE</span> = confirmada para el año que viene. Por ahora son Software, Enfermería y Primaria; consultá en el instituto por las demás.</p>
       <div class="careers">
-        ${[soft,...otras].map(c=>`<div class="career ${c.id==="soft"?"ours":""}"><span class="n">${esc(c.n)}${c.id==="soft"?" · este stand":""}</span><span class="pct">${esc(pct(c.p))}%</span><span class="why">${esc(c.why)}</span></div>`).join("")}
+        ${[soft,...otras].map(c=>`<div class="career ${c.id==="soft"?"ours":""}"><span class="n">${esc(c.n)}${c.id==="soft"?" · este stand":""}${c.abre?' <span class="abre">✔ ABRE</span>':""}</span><span class="pct">${esc(pct(c.p))}%</span><span class="why">${esc(c.why)}</span></div>`).join("")}
       </div>
       ${Math.max(soft.p,otras[0].p)<40?`<p>Ninguna carrera del instituto encaja del todo con tus respuestas, y eso también es un dato útil. Abajo te dejamos otras ideas para explorar.</p>`:otras[0].p>soft.p?`<p>Tu mejor resultado es <strong>${esc(otras[0].n)}</strong>. ¡Pasá también por su stand!</p>`:""}
     </div>
