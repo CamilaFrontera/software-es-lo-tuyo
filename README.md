@@ -7,8 +7,8 @@ Los estudiantes de sexto año responden 12 situaciones cotidianas y reciben:
 - su **clase de jugador** (tipo de interés dominante) y su código de 3 letras,
 - su **compatibilidad con Desarrollo de Software** y el rol que podrían ocupar en un equipo,
 - un **pase al salón** (o pase de invitado, si la compatibilidad es baja),
-- su compatibilidad con las otras carreras del instituto: Educación Inicial, Educación Primaria, Educación Especial, Biotecnología, Producción Agrícola Ganadera, Logística, Enfermería y Seguridad e Higiene,
-- con el pase desbloqueado, la **ficha de la carrera**: las 22 materias por año con su carga horaria, qué se aprende a hacer, dónde se trabaja y cómo se ingresa (datos de la Res. 5847/19 DGCyE),
+- su compatibilidad con las otras carreras que tienen stand: Educación Inicial, Educación Primaria, Educación Especial, Enfermería y Seguridad e Higiene, con la marca **✔ ABRE** en las confirmadas para el año que viene,
+- con el pase desbloqueado (o desde el link `#carrera`), la **ficha de la carrera**: las 22 materias por año con su carga horaria, qué se aprende a hacer, dónde se trabaja y cómo se ingresa (datos de la Res. 5847/19 DGCyE),
 - su resultado para llevarse: botón para **descargarlo como imagen** y, en la PC del stand, un **QR** que abre el mismo resultado en el celular.
 
 ## Cómo funciona
@@ -25,11 +25,10 @@ El test se basa en el modelo de intereses de John Holland (RIASEC: Realista, Inv
 | Educación Inicial | Kindergarten Teachers (25-2012.00) | SA |
 | Educación Primaria | Elementary School Teachers (25-2021.00) | S |
 | Educación Especial | Special Education Teachers (25-2057.00) | SAI |
-| Biotecnología | Biological Technicians (19-4021.00) | CRI |
-| Producción Agrícola Ganadera | Farmers, Ranchers, and Other Agricultural Managers (11-9013.00) | ERC |
-| Logística | Logisticians (13-1081.00) | CEI |
 | Enfermería | Registered Nurses (29-1141.00) | SCI |
 | Seguridad e Higiene | Occupational Health and Safety Specialists (19-5011.00) | ICR |
+
+Las carreras confirmadas para el año que viene (dato de preceptoría) tienen `abre:true` en `CARRERAS`: por ahora Software, Enfermería y Primaria. Si se confirma otra, se cambia ahí.
 
 Con 50% o más de compatibilidad con Software se muestra el pase al salón desbloqueado y el botón para ver la carrera.
 
