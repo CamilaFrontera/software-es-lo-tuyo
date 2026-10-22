@@ -223,6 +223,8 @@ const CARRERAS=[
   {id:"esp",n:"Educación Especial",code:"SAI",stand:true,oferta:"",why:"Profesorado para buscar la forma de enseñarle a cada estudiante. 4 años."},
   {id:"enf",n:"Enfermería",code:"SCI",stand:true,oferta:"abre",why:"Cuidar la salud de personas, familias y comunidades, en hospitales y en el barrio. 3 años. Después podés seguir la especialización en Salud Mental."},
   {id:"seg",n:"Seguridad e Higiene",code:"ICR",stand:true,oferta:"",why:"Inspeccionar lugares de trabajo, detectar riesgos y armar planes de evacuación. 3 años."},
+  {id:"agro",n:"Producción Agrícola Ganadera",code:"ERC",stand:true,oferta:"",why:"Gestionar un campo: cultivos, animales, máquinas y ventas, cuidando el suelo. 3 años."},
+  {id:"log",n:"Logística",code:"CEI",stand:true,oferta:"",why:"Organizar el recorrido de productos y servicios, del proveedor al cliente. 3 años."},
   {id:"rrhh",n:"Administración de Recursos Humanos",code:"ECS",stand:false,oferta:"abre",why:"Tecnicatura para gestionar a las personas de una organización: búsquedas, capacitación, sueldos y clima de trabajo."},
   {id:"ing",n:"Profesorado de Inglés",code:"SIA",stand:false,oferta:"pend",why:"Profesorado para enseñar inglés en escuelas. Todavía está pendiente de autorización."}
 ];
@@ -351,6 +353,15 @@ function fichaCarrera(top){
     </div>
 
     <div class="frame">
+      <h3>ESTA NOCHE EN LA CARRERA</h3>
+      <div class="skills">
+        <span><strong>1.er año:</strong> Descubre el alma de la IA</span>
+        <span><strong>2.º año:</strong> proyectos web para clientes reales: turnos médicos, cancha de pádel y stock de farmacia</span>
+        <span><strong>3.er año:</strong> Error 500, la sala de acertijos</span>
+      </div>
+    </div>
+
+    <div class="frame">
       <h3>QUÉ VAS A PODER HACER</h3>
       <div class="skills">
         <span>Diseñar un sistema a partir de lo que pide el cliente</span>
@@ -429,7 +440,7 @@ function bindMute(){const m=document.getElementById("mute"); if(m) m.onclick=()=
 const URL_TEST="https://camilafrontera.github.io/software-es-lo-tuyo/";
 /* VERSION va en los links de los QR: si un celular tiene guardada una versión vieja, la fuerza a cargar la nueva.
    Cambiarlo cada vez que se sube un index.html nuevo. */
-const VERSION="19";
+const VERSION="20";
 function baseURL(){
   try{ if(/^https?:$/.test(location.protocol) && !/claude/i.test(location.hostname)) return location.origin+location.pathname+"?v="+VERSION; }catch(e){}
   return URL_TEST+"?v="+VERSION;

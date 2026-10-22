@@ -28,6 +28,8 @@ El test se basa en el modelo de intereses de John Holland (RIASEC: Realista, Inv
 | Educación Especial | Special Education Teachers (25-2057.00) | SAI |
 | Enfermería | Registered Nurses (29-1141.00) | SCI |
 | Seguridad e Higiene | Occupational Health and Safety Specialists (19-5011.00) | ICR |
+| Producción Agrícola Ganadera | Farmers, Ranchers, and Other Agricultural Managers (11-9013.00) | ERC |
+| Logística | Logisticians (13-1081.00) | CEI |
 | Administración de Recursos Humanos | Human Resources Specialists (13-1071.00) | ECS |
 | Profesorado de Inglés | Foreign Language and Literature Teachers, Postsecondary (25-1124.00) | SIA |
 
