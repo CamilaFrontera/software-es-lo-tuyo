@@ -402,7 +402,7 @@ function fichaCarrera(top){
     <div class="frame">
       <h3>PARA ENTRAR</h3>
       <div class="skills">
-        <span>Tener el secundario completo. Si tenés más de 25 años y no lo terminaste, hay otra forma de inscribirte.</span>
+        <span>Tener el secundario completo.</span>
       </div>
       <p class="small"><strong>Desarrollo de Software está en la oferta académica 2027 del instituto.</strong> Estate atento/a a las fechas de inscripción.</p>
       <p class="small">Fuente: Diseño curricular de la Tecnicatura Superior en Desarrollo de Software, Res. 5847/19 de la Dirección General de Cultura y Educación.</p>
@@ -440,7 +440,7 @@ function bindMute(){const m=document.getElementById("mute"); if(m) m.onclick=()=
 const URL_TEST="https://camilafrontera.github.io/software-es-lo-tuyo/";
 /* VERSION va en los links de los QR: si un celular tiene guardada una versión vieja, la fuerza a cargar la nueva.
    Cambiarlo cada vez que se sube un index.html nuevo. */
-const VERSION="20";
+const VERSION="21";
 function baseURL(){
   try{ if(/^https?:$/.test(location.protocol) && !/claude/i.test(location.hostname)) return location.origin+location.pathname+"?v="+VERSION; }catch(e){}
   return URL_TEST+"?v="+VERSION;
