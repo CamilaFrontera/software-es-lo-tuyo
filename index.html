@@ -84,6 +84,8 @@ p{margin:0;max-width:62ch}
 .career.ours{box-shadow:inset 0 0 0 3px var(--yellow)}
 .career.ours .pct{color:var(--yellow)}
 .career .abre{font-family:var(--pixel);font-size:10px;color:var(--green);white-space:nowrap;margin-left:6px}
+.career .abre.pend{color:var(--yellow)}
+.career .abre.no{color:var(--muted)}
 .ext{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .ext span{font-weight:700;font-size:18px;padding:10px 14px;background:var(--dark);box-shadow:inset 0 0 0 2px var(--line)}
 
@@ -181,9 +183,10 @@ h3{font-family:var(--body);font-weight:700;font-size:clamp(17px,2.4vw,21px);lett
 <script>
 /* Modelo de intereses de Holland (RIASEC), el que usa el O*NET Interest Profiler.
    Cada opción de cada situación suma a un tipo, sin decirlo en pantalla.
-   Códigos de interés de O*NET: Software Developers IC · Kindergarten Teachers SA ·
-   Special Education Teachers SAI · Logisticians CEI · Registered Nurses SCI ·
-   Elementary School Teachers S · Occupational Health and Safety Specialists ICR */
+   Diseño de las 12 situaciones: cada tipo aparece en 8 y cada situación deja afuera un par distinto
+   de tipos que NO son opuestos en el hexágono de Holland. Así cada par de tipos compite en 5 situaciones
+   (los opuestos R-S, I-E, A-C en 4) y el segundo interés de cada jugador se mide igual de bien.
+   Los códigos de O*NET de cada carrera están en CARRERAS y en el README. */
 /* Carreras FUERA del instituto, solo como ideas para explorar según los dos intereses más fuertes */
 const EXTERNAS={
   R:["Mecánica o electrónica","Maestro mayor de obras","Veterinaria","Técnico en energías renovables"],
@@ -210,15 +213,18 @@ const ROL_SOFT={
   E:"Liderar proyectos: planificar etapas, tiempos y costos, y coordinar al equipo. Muchos terminan armando su propia empresa.",
   C:"Testing (QA), bases de datos y documentación: que todo esté ordenado y los errores se encuentren antes de que lleguen a la gente."
 };
-/* Carreras con stand en la Noche del Instituto. abre:true = confirmada para el año que viene
-   (dato de preceptoría; por ahora solo estas tres). Si se confirma otra, cambiar su abre a true. */
+/* Carreras del instituto que se muestran en el resultado.
+   stand: tiene stand en la Noche del Instituto.
+   oferta: "abre" = está en la Oferta Académica 2027 · "pend" = pendiente de autorización · "" = no abre en 2027. */
 const CARRERAS=[
-  {id:"soft",n:"Desarrollo de Software",code:"IC",abre:true,why:"Diseñar, programar y probar sistemas trabajando en equipo por proyectos. 3 años."},
-  {id:"ini",n:"Educación Inicial",code:"SA",abre:false,why:"Profesorado para enseñar y acompañar a los más chicos en el jardín. 4 años."},
-  {id:"pri",n:"Educación Primaria",code:"S",abre:true,why:"Profesorado para enseñar a leer, escribir y pensar a un grado entero. 4 años."},
-  {id:"esp",n:"Educación Especial",code:"SAI",abre:false,why:"Profesorado para buscar la forma de enseñarle a cada estudiante. 4 años."},
-  {id:"enf",n:"Enfermería",code:"SCI",abre:true,why:"Cuidar la salud de personas, familias y comunidades, en hospitales y en el barrio. 3 años."},
-  {id:"seg",n:"Seguridad e Higiene",code:"ICR",abre:false,why:"Inspeccionar lugares de trabajo, detectar riesgos y armar planes de evacuación. 3 años."}
+  {id:"soft",n:"Desarrollo de Software",code:"IC",stand:true,oferta:"abre",why:"Diseñar, programar y probar sistemas trabajando en equipo por proyectos. 3 años."},
+  {id:"ini",n:"Educación Inicial",code:"SA",stand:true,oferta:"",why:"Profesorado para enseñar y acompañar a los más chicos en el jardín. 4 años."},
+  {id:"pri",n:"Educación Primaria",code:"S",stand:true,oferta:"abre",why:"Profesorado para enseñar a leer, escribir y pensar a un grado entero. 4 años."},
+  {id:"esp",n:"Educación Especial",code:"SAI",stand:true,oferta:"",why:"Profesorado para buscar la forma de enseñarle a cada estudiante. 4 años."},
+  {id:"enf",n:"Enfermería",code:"SCI",stand:true,oferta:"abre",why:"Cuidar la salud de personas, familias y comunidades, en hospitales y en el barrio. 3 años. Después podés seguir la especialización en Salud Mental."},
+  {id:"seg",n:"Seguridad e Higiene",code:"ICR",stand:true,oferta:"",why:"Inspeccionar lugares de trabajo, detectar riesgos y armar planes de evacuación. 3 años."},
+  {id:"rrhh",n:"Administración de Recursos Humanos",code:"ECS",stand:false,oferta:"abre",why:"Tecnicatura para gestionar a las personas de una organización: búsquedas, capacitación, sueldos y clima de trabajo."},
+  {id:"ing",n:"Profesorado de Inglés",code:"SIA",stand:false,oferta:"pend",why:"Profesorado para enseñar inglés en escuelas. Todavía está pendiente de autorización."}
 ];
 
 const SITUACIONES=[
@@ -226,7 +232,7 @@ const SITUACIONES=[
     ["Voy a revisar la llave de luz (la térmica) para ver si se bajó","R"],
     ["Trato de averiguar por qué se cortó: ¿es solo en mi casa o en todo el barrio?","I"],
     ["Junto a mi familia y nos quedamos charlando a la luz de las velas","S"],
-    ["Llamo a la empresa de luz para que me digan cuándo vuelve","E"]]},
+    ["Busco la linterna y las velas que tengo guardadas para estos casos","C"]]},
   {q:"Tus amigos organizan un cumpleaños sorpresa para una amiga. ¿De qué te gustaría encargarte?",o:[
     ["De la decoración y de que todo quede lindo","A"],
     ["De anotar quién pone plata y qué trae cada uno","C"],
@@ -239,18 +245,18 @@ const SITUACIONES=[
     ["El líder que le da ánimo al grupo antes de la gran misión","E"]]},
   {q:"Un amigo está triste. ¿Qué hacés para ayudarlo?",o:[
     ["Me siento con él y lo escucho todo lo que necesite","S"],
-    ["Lo invito a hacer algo para que se distraiga, como andar en bici o jugar a la pelota","R"],
+    ["Lo invito a hacer algo con las manos para que se distraiga, como arreglar la bici o cocinar","R"],
     ["Le mando un meme, una canción o un dibujo para sacarle una sonrisa","A"],
-    ["Le pregunto qué le pasó, para entender bien el problema antes de opinar","I"]]},
+    ["Lo ayudo a analizar qué pasó, pieza por pieza, para encontrarle una salida","I"]]},
   {q:"Te regalan algo para armar, como un mueble o un juego de bloques. ¿Qué hacés con el manual de instrucciones?",o:[
     ["Lo leo y sigo cada paso en orden, sin saltearme ninguno","C"],
     ["Ni lo abro: miro las piezas y lo armo a mi manera","R"],
     ["Lo armo como dice el manual y después le cambio cosas para que quede distinto","A"],
-    ["Lo leemos con otra persona y lo armamos juntos, porque así es más divertido","S"]]},
+    ["Antes de empezar, miro cómo funciona cada pieza y por qué va en ese lugar","I"]]},
   {q:"En el grupo de WhatsApp de tu curso, ¿qué es lo que más hacés?",o:[
-    ["Aviso las fechas de los exámenes y paso los apuntes","C"],
+    ["Comparto datos curiosos o videos sobre algo que estuve investigando","I"],
     ["Propongo planes y organizo las juntadas","E"],
-    ["Mando stickers y memes","A"],
+    ["Hago los stickers y memes que usa todo el grupo","A"],
     ["Respondo las dudas de mis compañeros","S"]]},
   {q:"Te ofrecen cuatro trabajos para el verano. ¿Cuál elegís?",o:[
     ["Vender en un negocio donde entra mucha gente","E"],
@@ -263,8 +269,8 @@ const SITUACIONES=[
     ["Organizar un torneo de truco o de algún juego con el curso","E"],
     ["Charlar con un compañero y ayudarlo con algo que necesite","S"]]},
   {q:"El wifi de tu casa anda muy lento. ¿Qué hacés?",o:[
-    ["Busco un tutorial en internet y trato de arreglarlo yo","R"],
-    ["Trato de averiguar qué está fallando antes de tocar nada","I"],
+    ["Reinicio el módem, reviso los cables y pruebo hasta que ande","R"],
+    ["Comparto los datos de mi celu para que nadie en casa se quede sin internet","S"],
     ["Llamo a la empresa de internet y reclamo hasta que lo solucionen","E"],
     ["Anoto los días y horarios en que falla, para reclamar con pruebas","C"]]},
   {q:"¿Cuál de estos halagos te gustaría más que te digan?",o:[
@@ -276,10 +282,10 @@ const SITUACIONES=[
     ["Arreglar cualquier cosa con solo tocarla","R"],
     ["Saber lo que siente cada persona","S"],
     ["Convencer a cualquiera de cualquier cosa","E"],
-    ["Acordarme de todo lo que leo","I"]]},
+    ["Crear cualquier cosa que me imagine","A"]]},
   {q:"Tienen que entregar un trabajo en grupo en una semana y vienen atrasados. ¿Qué hacés vos?",o:[
     ["Tomo el mando y reparto las tareas","E"],
-    ["Armo un calendario con lo que hay que hacer cada día","C"],
+    ["Investigo el tema a fondo para que el contenido esté bien","I"],
     ["Me encargo de la parte práctica: armar la maqueta o construir lo que haga falta","R"],
     ["Le doy una idea original al trabajo para que se destaque","A"]]}
 ];
@@ -387,7 +393,7 @@ function fichaCarrera(top){
       <div class="skills">
         <span>Tener el secundario completo. Si tenés más de 25 años y no lo terminaste, hay otra forma de inscribirte.</span>
       </div>
-      <p class="small"><strong>Desarrollo de Software abre el año que viene.</strong> Estate atento/a a las fechas de inscripción del instituto.</p>
+      <p class="small"><strong>Desarrollo de Software está en la oferta académica 2027 del instituto.</strong> Estate atento/a a las fechas de inscripción.</p>
       <p class="small">Fuente: Diseño curricular de la Tecnicatura Superior en Desarrollo de Software, Res. 5847/19 de la Dirección General de Cultura y Educación.</p>
     </div>
 
@@ -423,7 +429,7 @@ function bindMute(){const m=document.getElementById("mute"); if(m) m.onclick=()=
 const URL_TEST="https://camilafrontera.github.io/software-es-lo-tuyo/";
 /* VERSION va en los links de los QR: si un celular tiene guardada una versión vieja, la fuerza a cargar la nueva.
    Cambiarlo cada vez que se sube un index.html nuevo. */
-const VERSION="17";
+const VERSION="19";
 function baseURL(){
   try{ if(/^https?:$/.test(location.protocol) && !/claude/i.test(location.hostname)) return location.origin+location.pathname+"?v="+VERSION; }catch(e){}
   return URL_TEST+"?v="+VERSION;
@@ -530,7 +536,10 @@ function resultado(){
 
 /* todo lo que se muestra (y se descarga) sale del perfil n */
 function calcular(n){
-  const rank=[...ORDEN].sort((a,b)=>n[b]-n[a]||ORDEN.indexOf(a)-ORDEN.indexOf(b));
+  /* empate: gana el tipo cuyos vecinos en el hexágono de Holland (R-I-A-S-E-C-R) puntúan más alto.
+     Solo depende de n, así el resultado llevado al celu (#r=) sale igual. */
+  const vec=t=>{const k=ORDEN.indexOf(t);return n[ORDEN[(k+1)%6]]+n[ORDEN[(k+5)%6]]};
+  const rank=[...ORDEN].sort((a,b)=>n[b]-n[a]||vec(b)-vec(a)||ORDEN.indexOf(a)-ORDEN.indexOf(b));
   const top=rank[0], codigo=rank.slice(0,3).join("");
   const lista=CARRERAS.map(c=>({...c,p:compat(n,c.code)}));
   const soft=lista[0], otras=lista.slice(1).sort((a,b)=>b.p-a.p);
@@ -578,11 +587,11 @@ function pantallaResultado(d){
 
     <div class="frame">
       <h3>OTRAS MISIONES EN EL INSTITUTO</h3>
-      <p class="small">Tu compatibilidad con cada carrera que tiene stand esta noche, según el mismo modelo de intereses. <span style="color:var(--green)">✔ ABRE</span> = confirmada para el año que viene. Por ahora son Software, Enfermería y Primaria; consultá en el instituto por las demás.</p>
+      <p class="small">Tu compatibilidad con cada carrera del instituto, según el mismo modelo de intereses. <span style="color:var(--green)">✔ ABRE 2027</span> = está en la oferta académica 2027. <span style="color:var(--yellow)">PENDIENTE</span> = espera autorización.</p>
       <div class="careers">
-        ${[soft,...otras].map(c=>`<div class="career ${c.id==="soft"?"ours":""}"><span class="n">${esc(c.n)}${c.id==="soft"?" · este stand":""}${c.abre?' <span class="abre">✔ ABRE</span>':""}</span><span class="pct">${esc(pct(c.p))}%</span><span class="why">${esc(c.why)}</span></div>`).join("")}
+        ${[soft,...otras].map(c=>`<div class="career ${c.id==="soft"?"ours":""}"><span class="n">${esc(c.n)}${c.id==="soft"?" · este stand":""}${c.oferta==="abre"?' <span class="abre">✔ ABRE 2027</span>':c.oferta==="pend"?' <span class="abre pend">PENDIENTE</span>':' <span class="abre no">NO ABRE EN 2027</span>'}</span><span class="pct">${esc(pct(c.p))}%</span><span class="why">${esc(c.why)}</span></div>`).join("")}
       </div>
-      ${Math.max(soft.p,otras[0].p)<40?`<p>Ninguna carrera del instituto encaja del todo con tus respuestas, y eso también es un dato útil. Abajo te dejamos otras ideas para explorar.</p>`:otras[0].p>soft.p?`<p>Tu mejor resultado es <strong>${esc(otras[0].n)}</strong>. ¡Pasá también por su stand!</p>`:""}
+      ${Math.max(soft.p,otras[0].p)<40?`<p>Ninguna carrera del instituto encaja del todo con tus respuestas, y eso también es un dato útil. Abajo te dejamos otras ideas para explorar.</p>`:otras[0].p>soft.p?`<p>Tu mejor resultado es <strong>${esc(otras[0].n)}</strong>. ${otras[0].stand?"¡Pasá también por su stand!":"No tiene stand esta noche: preguntá por ella en el instituto."}</p>`:""}
     </div>
 
     <div class="frame">
